@@ -1,25 +1,51 @@
-import logo from './logo.svg';
-import './App.css';
+import React, { useEffect, useState } from "react";
+import "bootstrap/dist/css/bootstrap.min.css";
+import { Routes, Route } from "react-router-dom";
+import "./App.css";
+import View from "./View";
+import Add from "./Add";
+import Navbar from "./Navbar";
 
 function App() {
+  const [todos, changeTodos] = useState([]);
+  useEffect(() => {
+    const stringFromLS = localStorage.getItem("list");
+    changeTodos(JSON.parse(stringFromLS) || []);
+  }, []);
+
+  function updateVal(value) {
+    console.log();
+  }
+
+  function updateMyValues(value) {
+    changeTodos((prevValue) => {
+      let newState = [...prevValue, value];
+      localStorage.setItem("list", JSON.stringify(newState));
+      return newState;
+    });
+  }
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <>
+      <Navbar />
+      <Routes>
+        <Route
+          path="/"
+          index
+          element={
+            <Add functionFromParent={(value) => updateMyValues(value)} />
+          }
+        />
+        <Route
+          path="/testing"
+          element={
+            <View
+              todos={todos}
+              functionFromParent={(value) => updateVal(value)}
+            />
+          }
+        />
+      </Routes>
+    </>
   );
 }
-
 export default App;
